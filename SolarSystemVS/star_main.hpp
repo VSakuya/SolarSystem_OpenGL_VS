@@ -26,16 +26,15 @@ public:
 		Star* parentStar);
 
 	//Draw movement and rotation of a star
-	void drawStar();
+	void DrawStar();
 
 	//Set a default implementation of a star
-	virtual void draw(){ drawStar(); }
+	virtual void Draw(){ DrawStar(); }
 
-	//parameter 'timeSpan' is the time between every screen refresh
-	virtual void update(long timeSpan);
+	virtual void Update(GLfloat DeltaTime);
 
 protected:
-	GLfloat alphaSelf, alpha;
+	GLfloat EquatorialRotationV, OrbitalSpeed;
 };
 
 class Planet : public Star
@@ -46,9 +45,9 @@ public:
 		GLfloat speed, GLfloat selfSpeed,
 		Star* parentStar, GLfloat rgbColot[3]);
 
-	void drawPlanet();
+	void DrawPlanet();
 
-	virtual void draw() {drawPlanet(); drawStar(); }
+	virtual void Draw() {DrawPlanet(); DrawStar(); }
 };
 
 class LightPlanet : public Planet 
@@ -58,8 +57,8 @@ public:
 		GLfloat speed, GLfloat selfSpeed,
 		Star* parentStar, GLfloat rgbColot[3]);
 
-	void drawLightPlanet();
-	virtual void draw() {drawLightPlanet(); drawPlanet(); drawStar(); }
+	void DrawLightPlanet();
+	virtual void Draw() {DrawLightPlanet(); DrawPlanet(); DrawStar(); }
 };
 
 #endif

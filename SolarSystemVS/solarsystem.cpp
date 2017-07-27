@@ -6,9 +6,9 @@
 
 #define REST 700
 #define REST_Z (REST)
-#define REST_Y (-REST)
+#define REST_Y 1000
 
-void SolarSystem::onDisplay()
+void SolarSystem::OnDisplay()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.7f, 0.7f, 0.7f, 0.1f);
@@ -36,42 +36,64 @@ void SolarSystem::onDisplay()
 
 	for (int i = 0; i < STARS_NUM; ++i)
 	{
-		stars[i]->draw();
+		Stars[i]->Draw();
 	}
 	glutSwapBuffers();
 }
 
 
 #define TIMEPAST 1
-void SolarSystem::onUpdate(int deltaMs)
+void SolarSystem::OnUpdate(GLfloat deltaTime)
 {
 	for (int i = 0; i < STARS_NUM; ++i)
 	{
-		stars[i]->update(TIMEPAST);
+		Stars[i]->Update(deltaTime);
 	}
-	this->onDisplay();
+	this->OnDisplay();
+	std::cout << "ViewX: " << viewX << ", ViewY: " << viewY << ", ViewZ: " << viewZ << std::endl;
+	std::cout << "CenterX: " << centerX << ", CenterY: " << centerY << ", CenterZ: " << centerZ << std::endl;
+	std::cout << "UpX: " << upX << ", UpY: " << upY << ", UpZ: " << upZ << std::endl;
 }
 
 #define OFFSET 20
-void SolarSystem::onKeyboard(unsigned char key, int x, int y)
+void SolarSystem::OnKeyboard(unsigned char key, int x, int y)
 {
 	switch(key) 
 	{
 		case 'w': viewY += OFFSET; break;
-		case 's': viewZ += OFFSET; break;
+		case 's': viewY -= OFFSET; break;
 		//case 'S': viewZ -= OFFSET; break;
 		case 'a': viewX -= OFFSET; break;
 		case 'd': viewX += OFFSET; break;
-		case 'x': viewY -= OFFSET; break;
+		case 'q': RotateCamera(1); break;
+		case 'e': RotateCamera(-1); break;
 		case 'r':
-			viewX = 0; viewY = REST_Y; viewZ = REST_Z;
+			viewX = 0; viewY = 0; viewZ = 1000;
 			centerX = centerY = centerZ = 0;
-			upX = upY = 0; upZ = 1;
+			upX = upZ = 0; upY = 1;
 			break;
 		/*Esc to exit*/
 		case 27: exit(0); break;
 		default: break;	
 	}
+}
+
+void SolarSystem::MoveCameraRight(GLfloat Axis)
+{
+	GLfloat CameraDist = sqrt(viewX * viewX + viewY * viewY + viewZ * viewZ);
+}
+
+void SolarSystem::MoveCameraUp(GLfloat Axis)
+{
+
+}
+
+GLfloat CurrentAngle = 90;
+void SolarSystem::RotateCamera(GLfloat DeltaAngle)
+{
+	CurrentAngle += DeltaAngle;
+	upX = cos(CurrentAngle);
+	upY = sin(CurrentAngle);
 }
 
 #define SUN_RADIUS 48.74
@@ -95,15 +117,15 @@ void SolarSystem::onKeyboard(unsigned char key, int x, int y)
 #define URA_DIS 848.00
 #define NEP_DIS 949.10
 
-#define MER_SPEED   87.0
-#define VEN_SPEED  225.0
-#define EAR_SPEED  365.0
-#define MOO_SPEED   30.0
-#define MAR_SPEED  687.0
-#define JUP_SPEED 1298.4
-#define SAT_SPEED 3225.6
-#define URA_SPEED 3066.4
-#define NEP_SPEED 6014.8
+#define MER_SPEED   8.70
+#define VEN_SPEED  22.50
+#define EAR_SPEED  36.50
+#define MOO_SPEED   3.00
+#define MAR_SPEED  68.70
+#define JUP_SPEED 129.84
+#define SAT_SPEED 322.56
+#define URA_SPEED 306.64
+#define NEP_SPEED 601.48
 
 #define SELFROTATE 3
 
@@ -113,47 +135,47 @@ void SolarSystem::onKeyboard(unsigned char key, int x, int y)
 SolarSystem::SolarSystem()
 {
 	viewX = 0;
-    viewY = REST_Y;
-    viewZ = REST_Z;
+    viewY = 0;
+    viewZ = 1000;
     centerX = centerY = centerZ = 0;
-    upX = upY = 0;
-    upZ = 1;
+    upX = upZ = 0;
+    upY = 1;
 
     GLfloat rgbColor[3] = {1, 0, 0};
-    stars[Sun]     = new LightPlanet(SUN_RADIUS, 0, 0, SELFROTATE, 0, rgbColor);
+    Stars[Sun]     = new LightPlanet(SUN_RADIUS, 0, 0, SELFROTATE, 0, rgbColor);
 
     SET_VALUE_3(rgbColor, .2, .2, .5);
-    stars[Mercury] = new Planet(MER_RADIUS, MER_DIS, MER_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Mercury] = new Planet(MER_RADIUS, MER_DIS, MER_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, 1, .7, 0);
-    stars[Venus]   = new Planet(VEN_RADIUS, VEN_DIS, VEN_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Venus]   = new Planet(VEN_RADIUS, VEN_DIS, VEN_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, 0, 1, 0);
-    stars[Earth]   = new Planet(EAR_RADIUS, EAR_DIS, EAR_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Earth]   = new Planet(EAR_RADIUS, EAR_DIS, EAR_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, 1, 1, 0);
-    stars[Moon]    = new Planet(MOO_RADIUS, MOO_DIS, MOO_SPEED, SELFROTATE, stars[Earth], rgbColor);
+    Stars[Moon]    = new Planet(MOO_RADIUS, MOO_DIS, MOO_SPEED, SELFROTATE, Stars[Earth], rgbColor);
 
     SET_VALUE_3(rgbColor, 1, .5, .5);
-    stars[Mars]    = new Planet(MAR_RADIUS, MAR_DIS, MAR_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Mars]    = new Planet(MAR_RADIUS, MAR_DIS, MAR_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, 1, 1, .5);
-    stars[Jupiter] = new Planet(JUP_RADIUS, JUP_DIS, JUP_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Jupiter] = new Planet(JUP_RADIUS, JUP_DIS, JUP_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, .5, 1, .5);
-    stars[Saturn]  = new Planet(SAT_RADIUS, SAT_DIS, SAT_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Saturn]  = new Planet(SAT_RADIUS, SAT_DIS, SAT_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, .4, .4, .4);
-    stars[Uranus]  = new Planet(URA_RADIUS, URA_DIS, URA_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Uranus]  = new Planet(URA_RADIUS, URA_DIS, URA_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 
     SET_VALUE_3(rgbColor, .5, .5, 1);
-    stars[Neptune] = new Planet(NEP_RADIUS, NEP_DIS, NEP_SPEED, SELFROTATE, stars[Sun], rgbColor);
+    Stars[Neptune] = new Planet(NEP_RADIUS, NEP_DIS, NEP_SPEED, SELFROTATE, Stars[Sun], rgbColor);
 }
 
 SolarSystem::~SolarSystem()
 {
 	for (int i = 0; i < STARS_NUM; ++i)
 	{
-		delete stars[i];
+		delete Stars[i];
 	}
 }

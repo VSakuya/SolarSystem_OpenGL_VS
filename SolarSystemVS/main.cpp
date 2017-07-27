@@ -15,26 +15,25 @@
 
 SolarSystem solarsystem;
 
-int timeLastFrame = 0;
+long timeLastFrame = 0;
 
 //register for glut callback
-void onDisplay(void)
+void OnDisplay(void)
 {
-	solarsystem.onDisplay();
+	solarsystem.OnDisplay();
 }
-void onUpdate(void)
+void OnUpdate(void)
 {	
 	/*show fps*/
-	int time = 0;
-	time = glutGet(GLUT_ELAPSED_TIME);
+	long time = 0;
+	time = GetTickCount();
 	int msThisFrame = time - timeLastFrame;
-	std::cout << "Frame is: " << 1000 / msThisFrame << std::endl;
 	timeLastFrame = time;
-	solarsystem.onUpdate(msThisFrame);
+	solarsystem.OnUpdate(GLfloat(msThisFrame) / 1000);
 }
-void onKeyboard(unsigned char key, int x, int y)
+void OnKeyboard(unsigned char key, int x, int y)
 {
-	solarsystem.onKeyboard(key, x, y);
+	solarsystem.OnKeyboard(key, x, y);
 }
 
 int main(int argc, char* argv[]) {
@@ -55,7 +54,6 @@ int main(int argc, char* argv[]) {
 
 	//Set the initial window size
 	glutInitWindowSize(WIDTH, HEIGHT);
-
 	//Create a window and give it a title
 	glutCreateWindow("Solar system");
 
@@ -70,9 +68,9 @@ int main(int argc, char* argv[]) {
 	// 会将键盘上的键与一个函数关联，当这个键被按下或者释放时，函数就会调用
 	//
 	// 因此下面的三行实际上是在向 GLUT 注册关键的三个回调函数
-	glutDisplayFunc(onDisplay);
-	glutIdleFunc(onUpdate);
-	glutKeyboardFunc(onKeyboard);
+	glutDisplayFunc(OnDisplay);
+	glutIdleFunc(OnUpdate);
+	glutKeyboardFunc(OnKeyboard);
 	glutMainLoop();
 	return 0;
 

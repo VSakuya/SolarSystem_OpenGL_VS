@@ -27,12 +27,16 @@ public:
 	SolarSystem();
 	~SolarSystem();
 
-	void onDisplay();
-	void onUpdate(int deltaMs);
-	void onKeyboard(unsigned char key, int x, int y);
+	void OnDisplay();
+	void OnUpdate(GLfloat DeltaTime);
+	void OnKeyboard(unsigned char key, int x, int y);
+
+	void MoveCameraRight(GLfloat Axis);
+	void MoveCameraUp(GLfloat Axis);
+	void RotateCamera(GLfloat DeltaAngle);
 
 private:
-	class Star *stars[STARS_NUM];
+	class Star *Stars[STARS_NUM];
 
 	//define view parameters
 	GLdouble viewX, viewY, viewZ;
